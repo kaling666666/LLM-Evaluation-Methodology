@@ -64,3 +64,29 @@
 .md-grid {
   max-width: 1300px;
 }
+/* ==========================================
+   5. 优化顶部导航栏左侧标题区域，解决拥挤感
+   ========================================== */
+/* 增加 Logo 和文字之间的间距 */
+.md-header__button.md-logo {
+  margin-right: 0.5rem; /* 给图标右侧加一点空白 */
+}
+
+/* 调整标题文字的样式，防止变形和拥挤 */
+.md-header__title {
+  font-weight: 500;
+  letter-spacing: 0.5px; /* 增加字间距，让文字更舒展 */
+}
+
+/* 如果标题文字太长，可以稍微缩小一点字号 */
+.md-header__topic:first-child {
+  font-size: 0.95rem;
+}
+
+/* 隐藏副标题（比如鼠标滚动时出现的“第二章...”变体），保持顶部干净 */
+.md-header__topic:last-child {
+  opacity: 0.8;
+}
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans SC", sans-serif;
+}

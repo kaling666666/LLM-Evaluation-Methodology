@@ -22,8 +22,8 @@ theme:
 
   # 引入中文字体（思源黑体）和代码字体
   font:
-    text: Noto Sans SC
-    code: Roboto Mono
+  #   text: Noto Sans SC
+  #   code: Roboto Mono
 
   # 引入自定义 CSS 文件（后面步骤会创建）
   extra_css:
@@ -31,9 +31,12 @@ theme:
 
   # 顶部/侧边栏/搜索等增强功能
   features:
+    # ... 之前的配置 ...
+    - navigation.tabs.sticky  # (可选) 保持顶部栏固定
+    - navigation.header       # 强制顶部显示主标题
     - navigation.instant   # 页面无刷新跳转（体验丝滑）
     - navigation.tracking  # 滚动时自动更新 URL 锚点
-    - navigation.tabs      # 顶部一级导航
+    # - navigation.tabs    # 👈 注释掉这一行，顶部导航就会移到左侧
     - navigation.sections  # 侧边栏分组
     - navigation.expand    # 侧边栏默认展开
     - navigation.top       # 回到顶部按钮
