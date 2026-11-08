@@ -1,0 +1,53 @@
+site_name: 大模型评测方法论（通用版）
+site_description: 从通用框架到RAG与Agent的工程化实践
+site_author: kaling666666
+site_url: https://kaling666666.github.io/LLM-Evaluation-Methodology/
+
+theme:
+  name: material
+  language: zh  # 关键：开启中文界面
+  palette:      # 深浅色主题切换
+    - scheme: default
+      primary: indigo
+      accent: indigo
+      toggle:
+        icon: material/brightness-7
+        name: 切换到深色模式
+    - scheme: slate
+      primary: indigo
+      accent: indigo
+      toggle:
+        icon: material/brightness-4
+        name: 切换到浅色模式
+  features:
+    - navigation.tabs          # 顶部标签栏
+    - navigation.sections      # 侧边栏分组
+    - navigation.expand        # 默认展开侧边栏
+    - navigation.top           # 回到顶部按钮
+    - search.suggest           # 搜索建议
+    - search.highlight         # 搜索结果高亮
+    - content.code.copy        # 代码块复制按钮
+
+nav:  # 左侧导航栏，这里将中文名称映射到英文文件名
+  - 首页: index.md
+  - 第一章 评测总论: chapter-1.md
+  - 第二章 RAG评测: chapter-2.md
+  - 第三章 Agent评测: chapter-3.md
+  - 第四章 评测补充: chapter-4.md
+  - 第五章 常见问题: chapter-5.md
+
+plugins:
+  - search:
+      lang: zh  # 关键：开启中文搜索分词
+
+markdown_extensions:
+  - admonition  # 提示框插件（用来写 Warning/Note）
+  - pymdownx.highlight:
+      anchor_linenums: true
+  - pymdownx.inlinehilite
+  - pymdownx.superfences  # 支持代码块、Mermaid图
+  - pymdownx.tabbed:
+      alternate_style: true
+  - tables
+  - toc:
+      permalink: true  # 标题旁边生成锚点链接
