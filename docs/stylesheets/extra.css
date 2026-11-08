@@ -1,0 +1,66 @@
+/* ==========================================
+   1. 基础排版优化，拒绝“一坨字”
+   ========================================== */
+.md-typeset {
+  line-height: 1.8;
+  font-size: 0.95rem;
+  color: #37474f; /* 柔和的深灰色，避免纯黑的刺眼 */
+}
+
+/* 增加段落之间的间距 */
+.md-typeset p {
+  margin-bottom: 1.2rem;
+}
+
+/* ==========================================
+   2. 标题层级视觉强化
+   ========================================== */
+/* 章标题 (H1) */
+.md-typeset h1 {
+  font-weight: 700;
+  font-size: 2.2rem;
+  margin-top: 1.5rem;
+  margin-bottom: 2rem;
+  color: #1a237e; /* 深蓝色，稳重大气 */
+}
+
+/* 节标题 (H2, 如 2.1) */
+.md-typeset h2 {
+  font-weight: 600;
+  font-size: 1.5rem;
+  margin-top: 2.5rem; /* 上方留出大量空白 */
+  margin-bottom: 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 2px solid #e8eaf6; /* 加一条极淡的底边线分隔 */
+  color: #283593;
+}
+
+/* 小节标题 (H3, 如 按检索器类型) */
+.md-typeset h3 {
+  font-weight: 600;
+  font-size: 1.2rem;
+  margin-top: 1.8rem;
+  margin-bottom: 0.8rem;
+  color: #3949ab;
+}
+
+/* ==========================================
+   3. 代码与提示框美化
+   ========================================== */
+.md-typeset code {
+  border-radius: 4px;
+  padding: 0.2em 0.4em;
+  background-color: #f5f5f5;
+  color: #d81b60; /* 行内代码用亮色强调 */
+}
+.md-typeset .admonition {
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.05); /* 提示框增加一点阴影 */
+}
+
+/* ==========================================
+   4. 加宽页面内容区
+   ========================================== */
+.md-grid {
+  max-width: 1300px;
+}

@@ -1,34 +1,67 @@
-site_name: 大模型评测方法论（通用版）
+# ==========================================
+# 1. 站点基础信息
+# ==========================================
+site_name: 大模型评测方法论（通用版-具体项目需适应性调整）
 site_description: 从通用框架到RAG与Agent的工程化实践
 site_author: kaling666666
 site_url: https://kaling666666.github.io/LLM-Evaluation-Methodology/
 
+# 右上角 GitHub 仓库链接
+repo_url: https://github.com/kaling666666/LLM-Evaluation-Methodology
+repo_name: kaling666666/LLM-Evaluation-Methodology
+
+# 底部版权信息
+copyright: Copyright &copy; 2026 kaling666666
+
+# ==========================================
+# 2. 主题与界面排版 (Material 主题)
+# ==========================================
 theme:
   name: material
-  language: zh  # 关键：开启中文界面
-  palette:      # 深浅色主题切换
-    - scheme: default
+  language: zh  # 中文界面
+
+  # 引入中文字体（思源黑体）和代码字体
+  font:
+    text: Noto Sans SC
+    code: Roboto Mono
+
+  # 引入自定义 CSS 文件（后面步骤会创建）
+  extra_css:
+    - stylesheets/extra.css
+
+  # 顶部/侧边栏/搜索等增强功能
+  features:
+    - navigation.instant   # 页面无刷新跳转（体验丝滑）
+    - navigation.tracking  # 滚动时自动更新 URL 锚点
+    - navigation.tabs      # 顶部一级导航
+    - navigation.sections  # 侧边栏分组
+    - navigation.expand    # 侧边栏默认展开
+    - navigation.top       # 回到顶部按钮
+    - search.suggest       # 搜索建议
+    - search.highlight     # 搜索结果高亮
+    - content.code.copy    # 代码块一键复制按钮
+
+  # 深浅色主题调色板
+  palette:
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
       primary: indigo
       accent: indigo
       toggle:
         icon: material/brightness-7
         name: 切换到深色模式
-    - scheme: slate
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
       primary: indigo
       accent: indigo
       toggle:
         icon: material/brightness-4
         name: 切换到浅色模式
-  features:
-    - navigation.tabs          # 顶部标签栏
-    - navigation.sections      # 侧边栏分组
-    - navigation.expand        # 默认展开侧边栏
-    - navigation.top           # 回到顶部按钮
-    - search.suggest           # 搜索建议
-    - search.highlight         # 搜索结果高亮
-    - content.code.copy        # 代码块复制按钮
 
-nav:  # 左侧导航栏，这里将中文名称映射到英文文件名
+# ==========================================
+# 3. 左侧导航栏结构
+# ==========================================
+nav:
   - 首页: index.md
   - 第一章 评测总论: chapter-1.md
   - 第二章 RAG评测: chapter-2.md
@@ -36,18 +69,28 @@ nav:  # 左侧导航栏，这里将中文名称映射到英文文件名
   - 第四章 评测补充: chapter-4.md
   - 第五章 常见问题: chapter-5.md
 
+# ==========================================
+# 4. 插件配置
+# ==========================================
 plugins:
   - search:
-      lang: zh  # 关键：开启中文搜索分词
+      lang: zh  # 中文搜索分词
 
+# ==========================================
+# 5. Markdown 语法增强
+# ==========================================
 markdown_extensions:
-  - admonition  # 提示框插件（用来写 Warning/Note）
-  - pymdownx.highlight:
+  - admonition              # 提示框 (!!! note)
+  - tables                  # 表格支持
+  - md_in_html              # 允许在 Markdown 中嵌套 HTML (首页排版用)
+  - toc:                    # 目录增强
+      permalink: true       # 标题旁生成锚点链接
+      toc_depth: 3          # 右侧目录显示到三级标题
+  - pymdownx.highlight:     # 代码高亮
       anchor_linenums: true
-  - pymdownx.inlinehilite
-  - pymdownx.superfences  # 支持代码块、Mermaid图
-  - pymdownx.tabbed:
+      line_spans: __span
+      pygments_lang_class: true
+  - pymdownx.inlinehilite   # 行内代码高亮
+  - pymdownx.superfences    # 支持更高级的代码块和图表
+  - pymdownx.tabbed:        # 选项卡样式
       alternate_style: true
-  - tables
-  - toc:
-      permalink: true  # 标题旁边生成锚点链接
