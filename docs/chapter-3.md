@@ -57,13 +57,14 @@ Agent 的开发周期比 RAG 多出一个“行为调优”的维度，通常表
 产出：线上失败根因报告 + 评测集更新记录。
 
 ## 3.5 Agent评测工具：用途与链接
-工具	主要用途	核心能力	链接
-AgentRubric	轨迹级五维评测	tool_accuracy、argument_fidelity、trajectory_length、completion、failure_taxonomy；零依赖，输出 JSON 适合 CI	https://pypi.org/project/agentrubric/
-LangSmith / Langfuse	Trace 记录 + 数据集管理 + 评估实验	Observe + Evaluate 层；支持 judge 配置与实验对比	https://smith.langchain.com/ / https://langfuse.com/
-Arize Phoenix	开源 Trace 可观测性与评估	OpenTelemetry-based；LLM-based eval 附着到 trace/span；支持 Agent 评估指南	https://arize.com/docs/phoenix
-TRACE（参考框架）	深度研究 Agent 的轨迹感知评测	分层轨迹效用、Scaffolded Capability Assessment；揭示“高分幻觉”	https://dl.acm.org/doi/10.1145/3774904.3792738
-AgentLens	交互式代码 Agent 的轨迹评测	形式化验证 + LLM 轨迹评论 + 版本回归	https://github.com/agent-lens/agent-lens-bench
-选型建议：如果需要一个轻量、可直接嵌入脚本或 CI 的轨迹指标层，AgentRubric 的接口最直接；如果 Trace 采集和评估需要在同一平台内闭环，LangSmith/Langfuse 或 Phoenix 更合适；TRACE 更适合作为设计自定义轨迹指标时的概念框架，而不是开箱即用的工具。
+
+| 工具 | 主要用途 | 核心能力 | 链接 |
+| :--- | :--- | :--- | :--- |
+| **AgentRubric** | 轨迹级五维评测 | tool_accuracy、argument_fidelity、trajectory_length、completion、failure_taxonomy；零依赖，输出 JSON 适合 CI | [pypi.org/project/agentrubric/](https://pypi.org/project/agentrubric/) |
+| **LangSmith / Langfuse** | Trace 记录 + 数据集管理 + 评估实验 | Observe + Evaluate 层；支持 judge 配置与实验对比 | [smith.langchain.com](https://smith.langchain.com/) / [langfuse.com](https://langfuse.com/) |
+| **Arize Phoenix** | 开源 Trace 可观测性与评估 | OpenTelemetry-based；LLM-based eval 附着到 trace/span；支持 Agent 评估指南 | [arize.com/docs/phoenix](https://arize.com/docs/phoenix) |
+| **TRACE（参考框架）** | 深度研究 Agent 的轨迹感知评测 | 分层轨迹效用、Scaffolded Capability Assessment；揭示“高分幻觉” | [ACM 论文链接](https://dl.acm.org/doi/10.1145/3774904.3792738) |
+| **AgentLens** | 交互式代码 Agent 的轨迹评测 | 形式化验证 + LLM 轨迹评论 + 版本回归 | [GitHub 仓库](https://github.com/agent-lens/agent-lens-bench) |
 
 ## 3.6 Agent技术补充：轨迹评测的独特性与归因层
 Agent 评测与 RAG 评测最深刻的区别在于归因的维度。RAG 的失败可以归因到“检索层”或“生成层”；Agent 的失败需要归因到 “哪一步、哪一类决策、是模型问题还是工程问题” 。

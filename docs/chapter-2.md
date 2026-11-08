@@ -55,13 +55,14 @@ RAG 的开发不是线性的“建索引 → 跑问答”，而是围绕“检�
 产出：Trace 证据、门禁阻断记录、回归通过率趋势。
 
 ## 2.5 RAG评测工具：用途与链接
-工具	主要用途	核心能力	链接
-RAGAS	RAG 全链路指标评测	faithfulness、answer_relevancy、context_precision、context_recall、answer_correctness；与 MLflow 集成	https://docs.ragas.io/
-DeepEval	工程化 RAG 评测与 CI 集成	ContextualRecall、CitationFaithfulness 等自解释指标；阈值与 strict_mode 适合门禁	https://deepeval.com/
-LlamaIndex Evaluation	检索层独立评测 + 生成层评估	RetrievalEvaluator 提供 Hit-Rate、MRR、Precision、Recall、NDCG；响应评估覆盖 Correctness、Faithfulness、Relevancy	https://developers.llamaindex.ai/
-TruLens	RAG 评估 + 可观测性	RAG Triad（Context Relevance、Answer Relevance、Groundedness）；Feedback Functions	https://www.trulens.org/
-Arize Phoenix	Trace 级可观测性与评估	基于 OpenTelemetry 的 Trace 采集；LLM-based eval 附着到 trace/span；支持 RAGAS、DeepEval 集成	https://arize.com/docs/phoenix
-选型建议：如果目标是快速得到指标全貌，RAGAS 的指标集最完整；如果需要把评测嵌入 CI 并做门禁，DeepEval 的阈值与 strict_mode 设计更工程友好；如果检索层是主要瓶颈，先用 LlamaIndex RetrievalEvaluator 把检索问题从生成问题中拆出来；如果已经进入可观测性阶段，Phoenix 提供从 Trace 到评估的闭环。
+
+| 工具 | 主要用途 | 核心能力 | 链接 |
+| :--- | :--- | :--- | :--- |
+| **RAGAS** | RAG 全链路指标评测 | faithfulness、answer_relevancy、context_precision、context_recall、answer_correctness；与 MLflow 集成 | [docs.ragas.io](https://docs.ragas.io/) |
+| **DeepEval** | 工程化 RAG 评测与 CI 集成 | ContextualRecall、CitationFaithfulness 等自解释指标；阈值与 strict_mode 适合门禁 | [deepeval.com](https://deepeval.com/) |
+| **LlamaIndex Evaluation** | 检索层独立评测 + 生成层评估 | RetrievalEvaluator 提供 Hit-Rate、MRR、Precision、Recall、NDCG；响应评估覆盖 Correctness、Faithfulness、Relevancy | [developers.llamaindex.ai](https://developers.llamaindex.ai/) |
+| **TruLens** | RAG 评估 + 可观测性 | RAG Triad（Context Relevance、Answer Relevance、Groundedness）；Feedback Functions | [trulens.org](https://www.trulens.org/) |
+| **Arize Phoenix** | Trace 级可观测性与评估 | 基于 OpenTelemetry 的 Trace 采集；LLM-based eval 附着到 trace/span；支持 RAGAS、DeepEval 集成 | [arize.com/docs/phoenix](https://arize.com/docs/phoenix) |
 
 ## 2.6 RAG技术补充：RAG vs. 长上下文 vs. Markdown结构化供给
 RAG 的评测方案设计，需要理解它在技术选型中的位置。长上下文模型和 Markdown 结构化供给正在改变 RAG 的适用边界，但并没有取消 RAG 的评测需求，而是改变了评测的侧重点。
