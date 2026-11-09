@@ -3,11 +3,14 @@
 ## 4.1 评测模型选取
 LLM-as-Judge 的模型选择不是“越强越好”，而是一个成本、偏差与校准的三维权衡。
 
-按角色选择。 在 RAG 评测中，judge 通常用于 Faithfulness、Answer Relevancy、Context Precision 等需要语义判断的指标。DeepEval 默认使用 GPT 系列作为 judge，但也支持自定义 LLM 和本地模型。在 Agent 轨迹评测中，judge 需要判断工具调用和参数的正确性，对结构化输出的稳定性要求更高，适合选择 instruction-following 更强的模型。
+### 按角色选择。 
+在 RAG 评测中，judge 通常用于 Faithfulness、Answer Relevancy、Context Precision 等需要语义判断的指标。DeepEval 默认使用 GPT 系列作为 judge，但也支持自定义 LLM 和本地模型。在 Agent 轨迹评测中，judge 需要判断工具调用和参数的正确性，对结构化输出的稳定性要求更高，适合选择 instruction-following 更强的模型。
 
-避免同家族偏差。 如果生成模型和 judge 模型来自同一家族，judge 可能对同家族输出存在偏好，系统性地高估质量。实践中建议 judge 选择与生成模型不同的模型家族，并在上线前用人工金标集做校准。
+### 避免同家族偏差。 
+如果生成模型和 judge 模型来自同一家族，judge 可能对同家族输出存在偏好，系统性地高估质量。实践中建议 judge 选择与生成模型不同的模型家族，并在上线前用人工金标集做校准。
 
-考虑成本-保真度权衡。 前沿 judge 的单次调用成本可能比小模型高出两个数量级。对于大规模回归评测，可以采用分层 judge 策略：用低成本模型做全量粗筛，用高保真 judge 对边界样本和争议样本做精判，人工只处理 judge 分歧最大的小比例样本。
+### 考虑成本-保真度权衡。 
+前沿 judge 的单次调用成本可能比小模型高出两个数量级。对于大规模回归评测，可以采用分层 judge 策略：用低成本模型做全量粗筛，用高保真 judge 对边界样本和争议样本做精判，人工只处理 judge 分歧最大的小比例样本。
 
 ## 4.2 评测预算
 评测的真实成本远不止 judge 的 token 费用。Arize 的成本分析指出，Trace 处理量、evaluator 覆盖范围、工作流深度、人工复核和 Trace 保留策略共同构成总账单，judge token 只是最容易计算的那一部分。
