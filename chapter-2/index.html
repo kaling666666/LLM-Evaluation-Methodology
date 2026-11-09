@@ -1,0 +1,897 @@
+
+<!doctype html>
+<html lang="zh" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="从通用框架到RAG与Agent的工程化实践">
+      
+      
+        <meta name="author" content="kaling666666">
+      
+      
+        <link rel="canonical" href="https://kaling666666.github.io/LLM-Evaluation-Methodology/chapter-2/">
+      
+      
+        <link rel="prev" href="../chapter-1/">
+      
+      
+        <link rel="next" href="../chapter-3/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.8.1">
+    
+    
+      
+        <title>第二章 RAG评测 - 大模型评测方法论</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.57a0d79d.min.css">
+      
+        
+        <link rel="stylesheet" href="../assets/stylesheets/palette.fb2fffe2.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#rag" class="md-skip">
+          跳转至
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="页眉">
+    <a href=".." title="大模型评测方法论" class="md-header__button md-logo" aria-label="大模型评测方法论" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            大模型评测方法论
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              第二章 RAG评测
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="切换到深色模式"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="切换到深色模式" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="切换到浅色模式"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="切换到浅色模式" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="搜索" placeholder="搜索" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="查找">
+        
+        <button type="reset" class="md-search__icon md-icon" title="清空当前内容" aria-label="清空当前内容" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            正在初始化搜索引擎
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/kaling666666/LLM-Evaluation-Methodology" title="前往仓库" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    kaling666666/LLM-Evaluation-Methodology
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="导航栏" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href=".." title="大模型评测方法论" class="md-nav__button md-logo" aria-label="大模型评测方法论" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    大模型评测方法论
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/kaling666666/LLM-Evaluation-Methodology" title="前往仓库" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    kaling666666/LLM-Evaluation-Methodology
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href=".." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    首页
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../chapter-1/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    第一章 评测总论
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    第二章 RAG评测
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    第二章 RAG评测
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="目录">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      目录
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#21-raggrounding" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.1 RAG认知：检索不是目的，grounding才是
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#22-rag" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.2 RAG分类：按检索范式与生成策略划分
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="2.2 RAG分类：按检索范式与生成策略划分">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        按检索器类型：
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        按生成策略。
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        按知识更新模式。
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#23-rag" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.3 RAG的典型开发周期
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#24-rag" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.4 RAG基于开发周期的评测流程
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#25-rag" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.5 RAG评测工具：用途与链接
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#26-ragrag-vs-vs-markdown" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.6 RAG技术补充：RAG vs. 长上下文 vs. Markdown结构化供给
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#27" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.7 本章小结
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../chapter-3/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    第三章 Agent评测
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../chapter-4/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    第四章 评测补充
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../chapter-5/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    第五章 常见问题
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="目录">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      目录
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#21-raggrounding" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.1 RAG认知：检索不是目的，grounding才是
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#22-rag" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.2 RAG分类：按检索范式与生成策略划分
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="2.2 RAG分类：按检索范式与生成策略划分">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        按检索器类型：
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        按生成策略。
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        按知识更新模式。
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#23-rag" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.3 RAG的典型开发周期
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#24-rag" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.4 RAG基于开发周期的评测流程
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#25-rag" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.5 RAG评测工具：用途与链接
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#26-ragrag-vs-vs-markdown" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.6 RAG技术补充：RAG vs. 长上下文 vs. Markdown结构化供给
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#27" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.7 本章小结
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="rag">第二章 RAG评测<a class="headerlink" href="#rag" title="Permanent link">&para;</a></h1>
+<h2 id="21-raggrounding">2.1 RAG认知：检索不是目的，grounding才是<a class="headerlink" href="#21-raggrounding" title="Permanent link">&para;</a></h2>
+<p>RAG（Retrieval-Augmented Generation，检索增强生成）的工程直觉常被简化为“先搜再答”。这个简化在工程上足够，但在评测上是有害的：它让人误以为“检索到了”就等于“答对了”。实际上，RAG 的核心质量命题是 grounding：生成的答案是否被检索到的证据所支撑，以及检索到的证据是否足以支撑一个正确的答案。</p>
+<p>RAG 的评测因此天然是分层的。检索层的问题（“正确片段在不在 Top-K 里”）和生成层的问题（“答案有没有超出检索上下文”）必须分开度量。把两者混为一个端到端分数，会丢失归因能力，使调优变成盲目的 prompt 试错。</p>
+<h2 id="22-rag">2.2 RAG分类：按检索范式与生成策略划分<a class="headerlink" href="#22-rag" title="Permanent link">&para;</a></h2>
+<p>RAG 系统的评测方案需要与其架构类型匹配。常见的分类维度包括：</p>
+<h3 id="_1">按检索器类型：<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h3>
+<p>稀疏检索（BM25）强在精确词匹配，弱在语义泛化；稠密检索（向量检索）强在语义相似，弱在罕见实体和精确术语；混合检索在两者之间取平衡。评测检索层时，指标的选择与检索器类型无关（Hit-Rate、MRR 通用），但基线预期不同——稀疏检索的 Hit-Rate 对措辞敏感，稠密检索的 Failure 更多来自 embedding 的领域漂移。</p>
+<h3 id="_2">按生成策略。<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h3>
+<p>抽取式（从上下文中抽取答案）的 Faithfulness 通常更高，但覆盖率受限；生成式（基于上下文自由生成）的 Answer Relevancy 可能更高，但幻觉风险上升。评测时应根据生成策略调整 Faithfulness 的阈值严格程度。</p>
+<h3 id="_3">按知识更新模式。<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
+<p>静态索引的 RAG 和持续更新的 RAG 在回归评测策略上不同：前者只需在发布前跑全量评测，后者需要将索引变更纳入门禁触发条件。</p>
+<h2 id="23-rag">2.3 RAG的典型开发周期<a class="headerlink" href="#23-rag" title="Permanent link">&para;</a></h2>
+<p>RAG 的开发不是线性的“建索引 → 跑问答”，而是围绕“检索质量”和“生成质量”交替迭代的循环。一个可操作的周期划分如下：</p>
+<p>阶段一：基线与数据准备。 确定被测数据集、标注或合成评测集（问题 + ground truth 上下文/答案），跑通原始检索与生成链路，得到第一组基线指标。</p>
+<p>阶段二：检索层调优。 调整 chunk_size、top_k、embedding 模型、reranker、检索策略（稀疏/稠密/混合），以检索层指标（Hit-Rate、MRR、Context Precision/Recall）为反馈信号。</p>
+<p>阶段三：生成层调优。 在检索稳定的基础上，调整 prompt、生成参数、引用策略，以 Faithfulness 和 Answer Relevancy 为反馈信号。</p>
+<p>阶段四：可观测性与回归固化。 接入 Trace 工具，将评测集和阈值固化为回归门禁，使后续任何变更（模型、prompt、索引）都经过同一套质量检查。</p>
+<h2 id="24-rag">2.4 RAG基于开发周期的评测流程<a class="headerlink" href="#24-rag" title="Permanent link">&para;</a></h2>
+<p>阶段一：基线评测
+评测活动：构造或标注评测集；对基线 RAG 系统跑全量指标；记录每个样本的检索结果和生成结果。</p>
+<p>核心工具：LlamaIndex 的 RetrievalEvaluator（用于独立评估检索器，支持 Hit-Rate、MRR 等排序指标）；RAGAS 或 DeepEval 用于生成层指标。</p>
+<p>产出：基线指标表（检索层 + 生成层），以及可复现的评测脚本。</p>
+<p>阶段二：检索层调优评测
+评测活动：对 chunk_size × top_k × embedding/reranker 组合做参数网格搜索；每一组配置只关注检索层指标，隔离生成层的变化。</p>
+<p>核心工具：LlamaIndex RetrievalEvaluator 负责 Hit-Rate / MRR；如果使用 AutoRAG 类工具做自动化搜索，其底层评估逻辑仍然应落到同一组检索指标上。</p>
+<p>产出：参数-指标对比表，明确“检索层的瓶颈在哪里”以及“当前配置离检索上限有多远”。</p>
+<p>阶段三：生成层调优与端到端验证
+评测活动：在选定检索配置上，评估 Faithfulness、Answer Relevancy、Answer Correctness；对失败样本做逐条归因（检索未召回 / 检索召回了但生成未使用 / 生成使用了但推理错误 / 引用标记错位）。</p>
+<p>核心工具：RAGAS 的 faithfulness / answer_relevancy / context_precision / context_recall；DeepEval 的 ContextualRecall、CitationFaithfulness 等指标，适合需要逐条解释的工程化场景。</p>
+<p>产出：生成层指标 + 失败归因表 + 是否达到上线阈值的结论。</p>
+<p>阶段四：可观测性与回归门禁
+评测活动：对线上或预发 Trace 进行抽样评估；将评测集接入 CI，设置指标阈值，任何低于阈值的变更加以阻断；记录 Trace 链路图作为归因证据。</p>
+<p>核心工具：Phoenix / Arize 提供 Trace 采集、LLM-based evaluation、以及将评估结果附着到 span 的能力；DeepEval 和 RAGAS 的指标可以集成到 Phoenix 的评估流程中。</p>
+<p>产出：Trace 证据、门禁阻断记录、回归通过率趋势。</p>
+<h2 id="25-rag">2.5 RAG评测工具：用途与链接<a class="headerlink" href="#25-rag" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">工具</th>
+<th style="text-align: left;">主要用途</th>
+<th style="text-align: left;">核心能力</th>
+<th style="text-align: left;">链接</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><strong>RAGAS</strong></td>
+<td style="text-align: left;">RAG 全链路指标评测</td>
+<td style="text-align: left;">faithfulness、answer_relevancy、context_precision、context_recall、answer_correctness；与 MLflow 集成</td>
+<td style="text-align: left;"><a href="https://docs.ragas.io/">docs.ragas.io</a></td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>DeepEval</strong></td>
+<td style="text-align: left;">工程化 RAG 评测与 CI 集成</td>
+<td style="text-align: left;">ContextualRecall、CitationFaithfulness 等自解释指标；阈值与 strict_mode 适合门禁</td>
+<td style="text-align: left;"><a href="https://deepeval.com/">deepeval.com</a></td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>LlamaIndex Evaluation</strong></td>
+<td style="text-align: left;">检索层独立评测 + 生成层评估</td>
+<td style="text-align: left;">RetrievalEvaluator 提供 Hit-Rate、MRR、Precision、Recall、NDCG；响应评估覆盖 Correctness、Faithfulness、Relevancy</td>
+<td style="text-align: left;"><a href="https://developers.llamaindex.ai/">developers.llamaindex.ai</a></td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>TruLens</strong></td>
+<td style="text-align: left;">RAG 评估 + 可观测性</td>
+<td style="text-align: left;">RAG Triad（Context Relevance、Answer Relevance、Groundedness）；Feedback Functions</td>
+<td style="text-align: left;"><a href="https://www.trulens.org/">trulens.org</a></td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Arize Phoenix</strong></td>
+<td style="text-align: left;">Trace 级可观测性与评估</td>
+<td style="text-align: left;">基于 OpenTelemetry 的 Trace 采集；LLM-based eval 附着到 trace/span；支持 RAGAS、DeepEval 集成</td>
+<td style="text-align: left;"><a href="https://arize.com/docs/phoenix">arize.com/docs/phoenix</a></td>
+</tr>
+</tbody>
+</table>
+<h2 id="26-ragrag-vs-vs-markdown">2.6 RAG技术补充：RAG vs. 长上下文 vs. Markdown结构化供给<a class="headerlink" href="#26-ragrag-vs-vs-markdown" title="Permanent link">&para;</a></h2>
+<p>RAG 的评测方案设计，需要理解它在技术选型中的位置。长上下文模型和 Markdown 结构化供给正在改变 RAG 的适用边界，但并没有取消 RAG 的评测需求，而是改变了评测的侧重点。</p>
+<p>RAG vs. 长上下文。 长上下文在“文档总量小、更新频率低、全局推理要求高”的场景中有质量优势。一项 2026 年的案例研究报告称，长上下文在制造安全培训问答上的正确率为 73.1%，而语义 RAG 为 65.4%，但长上下文的每查询 token 成本是 RAG 的 26 倍。另一项对比也指出，长上下文在资源充足时平均质量更高，而 RAG 的成本显著更低。这意味着 RAG 的评测不能只测“质量上限”，还必须同时把成本与延迟作为一等指标纳入决策。</p>
+<p>RAG vs. Markdown 结构化供给。 Markdown 常被用作 Agent 的“技能手册”或规则文件的格式，它与 RAG 解决的是不同问题：RAG 补知识，Markdown 技能文件教行为。Markdown 的优势在于可读、可版本管理、可按需加载，模型不需要一次性读取全文。但这并不意味着 Markdown 可以替代 RAG：面对大规模、持续更新、需要精确检索和溯源的知识库，RAG 仍然是工程上更可行的选择。在评测上，如果一个系统同时使用 RAG 提供事实知识、使用 Markdown 提供操作规则，那么评测必须分别覆盖知识 grounding 和行为遵循，不能用一个“端到端正确率”掩盖两者的独立失效。</p>
+<h2 id="27">2.7 本章小结<a class="headerlink" href="#27" title="Permanent link">&para;</a></h2>
+<p>RAG 评测的核心方法是分层归因：检索层回答“找得对不对”，生成层回答“答得有没有依据”，端到端层回答“对用户好不好”。工具的选择服务于这个分层结构，而不是反过来用工具的全量指标替代思考。长上下文和 Markdown 供给是技术选型的变量，它们改变 RAG 的边界和成本结构，但不改变“grounding 必须被度量”这一根本要求。</p>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  回到页面顶部
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-copyright__highlight">
+      Copyright &copy; 2026 kaling666666
+    </div>
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "..", "features": ["navigation.instant", "navigation.tracking", "navigation.top", "search.suggest", "search.highlight", "content.code.copy"], "search": "../assets/javascripts/workers/search.a7633da7.min.js", "tags": null, "translations": {"clipboard.copied": "\u5df2\u590d\u5236", "clipboard.copy": "\u590d\u5236", "search.result.more.one": "\u5728\u8be5\u9875\u4e0a\u8fd8\u6709 1 \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.more.other": "\u5728\u8be5\u9875\u4e0a\u8fd8\u6709 # \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.none": "\u6ca1\u6709\u627e\u5230\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.one": "\u627e\u5230 1 \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.other": "# \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.placeholder": "\u952e\u5165\u4ee5\u5f00\u59cb\u641c\u7d22", "search.result.term.missing": "\u7f3a\u5c11", "select.version": "\u9009\u62e9\u5f53\u524d\u7248\u672c"}, "version": null}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.a5f9d56c.min.js"></script>
+      
+    
+  </body>
+</html>
